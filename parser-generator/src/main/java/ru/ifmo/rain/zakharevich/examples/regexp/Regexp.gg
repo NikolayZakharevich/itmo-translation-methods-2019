@@ -1,0 +1,72 @@
+grammar Regexp;
+
+// header {package ru.ifmo.rain.zakharevich.examples.regexps;}
+
+/*
+
+E        -> Choice | E
+E        -> Choice
+Choice   -> Concat Choice
+Choice   -> Concat
+Concat   –> Closure Concat’
+Concat’  –> * Concat’
+Concat’  –> ε
+Closure  –> ( R )
+Closure  –> c
+
+
+E        –> Choice E’
+E’       –> | E
+E’       –> ε
+Choice   –> Concat Choice’
+Choice’  –> Choice
+Choice’  –> ε
+Concat   –> Closure Concat’
+Concat’  –> * Concat’
+Concat’  –> ε
+Closure  –> ( R )
+Closure  –> c
+
+*/
+
+
+expr
+  : choice exprP
+  ;
+
+exprP
+  : OR expr
+  |
+  ;
+
+choice
+  :  concat choiceP
+  ;
+
+choiceP
+  :
+  | choice
+  ;
+
+concat
+  : closure concatP
+  ;
+
+concatP
+  : ASTERISK concatP
+  |
+  ;
+
+closure
+  : LPAREN expr RPAREN
+  | SYMBOL
+  ;
+
+
+LPAREN      : '(' ;
+RPAREN      : ')' ;
+OR          : '|' ;
+ASTERISK    : '*' ;
+SYMBOL      : [a-z] ;
+
+WHITESPACES : [\n\r\t ]+ -> skip ;

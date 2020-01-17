@@ -1,0 +1,10 @@
+abcde
+(((a)))(b)(c)((d))
+a*b*c*
+(ab)*c*(abcd(efg*)*)*
+(a|b)
+(a|b|c(a|b|c)(ab|c|d))
+a b c ( a|b)* (z |x|v*)
+(((a*)(b*|c)*)*)*
+(a(b*)|((n*|m)*)(p)ab)*
+((((((a(b|c*)))))(abc)))

@@ -1,0 +1,75 @@
+grammar Calculator;
+
+/*
+
+S -> E
+E -> T + E | T - E | T
+T -> F * T | F / T | F
+F -> - A | A
+A -> n | ( E )
+
+E  -> T E'
+E' -> + T E | - T E | ε
+T  -> F T'
+T' -> * F T | / F T | ε
+F -> - A | A
+A -> n | ( E )
+
+*/
+
+header {
+package gen.results.calculator;
+import java.util.stream.IntStream;
+}
+
+fields { public int val; }
+
+s
+  : expr { System.out.println(expr.val); }
+  ;
+
+expr returns [int val]
+  : term exprP[term.val]                 { res.val = exprP.val; }
+  ;
+
+exprP[int i] returns [int val]
+  :                                       { res.val = i; }
+  | PLUS term exprP[i + term.val]         { res.val = exprP.val; }
+  | MINUS term exprP[i - term.val]        { res.val = exprP.val; }
+  ;
+
+term returns [int val]
+  : fact termP[fact.val]                 { res.val = termP.val; }
+  ;
+
+termP[int i] returns [int val]
+  :                                       { res.val = i; }
+  | TIMES fact termP[i * fact.val]   { res.val = termP.val; }
+  | DIV fact termP[i / fact.val]     { res.val = termP.val; }
+  ;
+
+fact returns [int val]
+  : MINUS atom                         { res.val = -atom.val; }
+  | atom factP[atom.val]               { res.val = factP.val; }
+  ;
+
+factP[int i] returns [int val]
+  :                                       { res.val = i; }
+  | FACTORIAL factP[i]                    { res.val = IntStream.rangeClosed(2, factP.val).reduce(1, (x, y) -> x * y); }
+  ;
+
+atom returns[int val]
+  : LPAREN expr RPAREN                    { res.val = expr.val; }
+  | NUMBER                                { res.val = Integer.parseInt(NUMBER.text); }
+  ;
+
+
+LPAREN      : '(' ;
+RPAREN      : ')' ;
+PLUS        : '+' ;
+MINUS       : '-' ;
+TIMES       : '*' ;
+DIV         : '/' ;
+FACTORIAL   : '!' ;
+NUMBER      : [1-9][0-9]* ;
+WHITESPACES : [\n\r\t ]+ -> skip ;
